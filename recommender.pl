@@ -8,8 +8,8 @@ main :-
 consult:-
     nl,
     write('Welcome young padawan, this is chatIMDB 4.0! Do you already have a movie in your mind?'), nl,
-    q_time, nl,
-    read(Ans1), nl,
+    q_time(Ans1), nl,
+    
     q_genre, nl,
     read(Ans2), nl,
     q_duration, nl,
@@ -29,16 +29,18 @@ recommend(Ans1, Genres, Ans3, Ans4, Ans5, Name) :-
     search_q_country(Ans4, ID),
     search_q_rating(Ans5, ID). 
 
-% Ask about time preference
-q_time :- 
+% Asks about time preference
+q_time(Time):- 
     write('Are you feeling old today?'), nl,
     write("1. Yes"),nl,
     write("2. No"),nl,
-    write("0. Anything goes"). 
+    write("0. Anything goes"), nl,
+    read(Ans),
+    validate_time(Ans,Time).
 
-% q_genre
+% q_genre asks for genres preferences
 q_genre :-
-    write('Got any genres in mind? Enter your preferred genres separated by commas: '), nl,
+    write('Got cheated on by your gymbro so looking for some dramas? Enter your preferred genres separated by commas: '), nl,
     write("1. Action"),nl,
     write("2. Comedy"),nl,
     write("3. Drama"),nl,
@@ -50,16 +52,16 @@ q_genre :-
     write("9. Crime"),nl,
     write("0. Anything goes"). 
 
-% q_rating
+% q_rating asks for rating score 
 q_rating(Rating) :-
-    write('What kind of rating are you looking for?'), nl,
+    write('Are you looking for a Razzie nominee?'), nl,
     write('Enter a number between 1 and 10: '),
     read(Ans),
     validate_rating(Ans, Rating).
 
-% q_country
+% q_country asks for country of production
 q_country :-
-    write('Where would you like your movie to have been produced?'), nl,
+    write('Today is an anime kinda day? Where would you like your movie to have been produced?'), nl,
     write("1. USA"),nl,
     write("2. France"),nl,
     write("3. Canada"),nl,
@@ -71,7 +73,7 @@ q_country :-
     write("9. Sweden"),nl,
     write("0. Anything goes"). 
 
-% q_duration
+% q_duration asks for how long
 q_duration :-
     write('Would you like a movie so long that youre growing roots by the time its finished?'), nl,
     write("1. Yes"),nl,
@@ -86,12 +88,6 @@ search_q_time(1,ID):-
 search_q_time(2,ID):-
     db(ID, _, Year, _, _, _, _),
     Year >= 1995.
-% search_q_time(Op) :- not( member(Op, [0, 1, 2]) ). 
-% search_q_time(R) :- 
-%    \+ member(R, [0, 1, 2]), % Check if Op is not 0, 1, or 2,
-%   writeln('Invalid input for response. Please enter 0, 1, or 2.'),
- %   read(newResponse),
- %   search_q_time(newResponse). % Recursively call search_q_time with the new response
 
 % Query such that duration is either shorter or longer than 2h depending on user preference
 search_q_duration(0,_).
@@ -143,3 +139,10 @@ validate_rating(_, ValidRating) :-
     read(NewAns),
     validate_rating(NewAns, ValidRating).
 
+validate_time(Ans, Time) :-
+    member(Ans, [0, 1, 2]), 
+    Time = Ans. 
+validate_time(Ans, Time):-
+    writeln('Invalid input for response. Please enter 0, 1, or 2.'),
+    read(newResponse),
+    validate_time(newResponse, Time).
